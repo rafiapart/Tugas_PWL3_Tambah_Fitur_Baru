@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Bookshelf;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+
+use function Pest\Laravel\delete;
 
 class BookController extends Controller
 {
@@ -126,5 +129,15 @@ class BookController extends Controller
     public function destroy(string $id)
     {
         //
+        $book = Book::findOrFail($id);
+        $book->delete();
+
+        return redirect()->route('book');
+    }
+
+    public function print(){
+        $books = Book::all();
+        $pdf = Pdf::loadView('books.print',['books' => $books]);
+        return $pdf->download('databooks.pdf');
     }
 }
